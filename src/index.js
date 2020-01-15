@@ -1,18 +1,36 @@
 const express = require('express');
 const morgan = require('morgan');
+const handle_bars = require('express-handlebars');
+const path = require('path');
 
 //init
-const app = express;
+const app = express();
 
 //conf
 app.set('port', process.env.PORT || 4000);
+app.set('views', path.join(__dirname, 'views'));
+
+app.engine('.hbs', handle_bars({
+  defaultLayout: 'main',
+  layoutsDir: path.join(app.get('views'), 'layouts'),
+  partialsDir: path.join(app.get('views'), 'partials'),
+  extname: '.hbs',
+  helpers: require('./lib/handlebars')
+}));
+app.set('view engine', '.hbs');
 
 //Middlewares
 app.use(morgan('dev'));
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
-//GLobals
+//Globals
+app.use((reqd, res, next) => {
+  next();
+});
 
-//ROutes
+//Routes
+app.use(require('./routes'));
 
 //Public
 
