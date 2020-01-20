@@ -25,15 +25,17 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 //Globals
-app.use((reqd, res, next) => {
+app.use((req, res, next) => {
   next();
 });
 
 //Routes
 app.use(require('./routes'));
+app.use(require('./routes/authentication'));
+app.use('/links', require('./routes/links'));
 
 //Public
-
+app.use(express.static(path.join(__dirname, 'public')));
 //Starting server
 
 app.listen(app.get('port'), () => {
