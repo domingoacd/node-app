@@ -17,12 +17,17 @@ passport.use('local.signup', new LocalStrategy({
     };
     newUser.password = await helpers.encryptPassword(password); 
     const result = await pool.query('INSERT INTO users SET?', [newUser]);
-
-    console.log(result);
+    newUser.id = result.inserId;
+    return done(null, newUser);
     
 }));
 
 
-// passport.serializeUser((usr, done) => {
+passport.serializeUser((usr, done) => {
+    done(null, usr.id);
+});
 
-// });
+passport.deserializeUser(async (id, done) => {
+    const rows = await pool.query('SELECT * FROM users WHERE id = ?' [id]);
+    done(null, rows[0]);
+});
